@@ -1,6 +1,7 @@
 import * as logger from "loglevel";
 import { Logger, LogLevelDesc } from "loglevel";
 import { MissingConfigurationError } from "./Errors";
+import axios, { AxiosInstance } from "axios";
 
 export interface NodeConfiguration {
   host: string;
@@ -60,6 +61,7 @@ export interface ConfigurationOptions {
 
   logLevel?: LogLevelDesc;
   logger?: Logger;
+  client?: AxiosInstance;
 }
 
 export default class Configuration {
@@ -80,6 +82,7 @@ export default class Configuration {
   readonly cacheSearchResultsForSeconds: number;
   readonly useServerSideSearchCache: boolean;
   readonly logger: Logger;
+  readonly client?: AxiosInstance;
   readonly logLevel: LogLevelDesc;
   readonly additionalHeaders?: Record<string, string>;
 
@@ -121,6 +124,8 @@ export default class Configuration {
     this.logger = options.logger || logger;
     this.logLevel = options.logLevel || "warn";
     this.logger.setLevel(this.logLevel);
+
+    this.client = options.client || axios;
 
     this.additionalHeaders = options.additionalHeaders;
 

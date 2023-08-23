@@ -33,6 +33,7 @@ export default class ApiCall {
   private readonly additionalUserHeaders?: Record<string, string>;
 
   private readonly logger: Logger;
+  private readonly client;
   private currentNodeIndex: number;
 
   constructor(private configuration: Configuration) {
@@ -54,6 +55,7 @@ export default class ApiCall {
     this.additionalUserHeaders = this.configuration.additionalHeaders;
 
     this.logger = this.configuration.logger;
+    this.client = configuration.client;
 
     this.initializeMetadataForNodes();
     this.currentNodeIndex = -1;
@@ -228,7 +230,7 @@ export default class ApiCall {
           requestOptions.cancelToken = source.token;
         }
 
-        const response = await axios(requestOptions);
+        const response = await this.client(requestOptions);
         if (response.status >= 1 && response.status <= 499) {
           // Treat any status code > 0 and < 500 to be an indication that node is healthy
           // We exclude 0 since some clients return 0 when request fails
